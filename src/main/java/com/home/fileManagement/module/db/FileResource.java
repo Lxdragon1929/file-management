@@ -55,4 +55,9 @@ public class FileResource {
      * 是否共享 1：共享
      */
     private boolean isShare;
+
+    /**
+     * 资源类型 1：图片 2：视频 3：音频 4：文档 5：其他
+     */
+    private Integer type;
 }
