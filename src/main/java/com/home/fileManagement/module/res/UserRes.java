@@ -1,20 +1,20 @@
-package com.home.fileManagement.module.db;
+package com.home.fileManagement.module.res;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
 
 /**
  * @author LX
  * @since 2021/3/24 9:54
  */
-@Table(name = "user")
-@Entity
 @Data
 @Accessors(chain = true)
-public class User {
+public class UserRes {
 
     @Id
     private String id;

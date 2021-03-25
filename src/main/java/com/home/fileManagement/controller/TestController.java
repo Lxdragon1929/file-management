@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.UUID;
 
 /**
  * @author LX
@@ -43,4 +42,5 @@ public class TestController {
         }
         return "上传成功";
     }
+
 }

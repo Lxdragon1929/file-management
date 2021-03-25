@@ -1,4 +1,4 @@
-package com.home.fileManagement.module.db;
+package com.home.fileManagement.module.req;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -12,13 +12,10 @@ import java.util.Date;
  * @author LX
  * @since 2021/3/24 11:15
  */
-@Table(name = "file_resource")
-@Entity
 @Data
 @Accessors(chain = true)
-public class FileResource {
+public class FileResourceReq {
 
-    @Id
     private String id;
 
     /**
@@ -42,11 +39,6 @@ public class FileResource {
     private String url;
 
     /**
-     * 是否删除 1：删除
-     */
-    private boolean isDelete;
-
-    /**
      * 是否共享 1：共享
      */
     private boolean isShare;
@@ -55,10 +47,6 @@ public class FileResource {
      * 资源类型 1：图片 2：视频 3：音频 4：文档 5：其他
      */
     private Integer type;
-
-    private Date createTime;
-
-    private Date updateTime;
 
     /**
      * 备注

@@ -1,4 +1,4 @@
-package com.home.fileManagement.module.db;
+package com.home.fileManagement.module.res;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -12,13 +12,10 @@ import java.util.Date;
  * @author LX
  * @since 2021/3/24 11:15
  */
-@Table(name = "file_resource")
-@Entity
 @Data
 @Accessors(chain = true)
-public class FileResource {
+public class FileResourceRes {
 
-    @Id
     private String id;
 
     /**
