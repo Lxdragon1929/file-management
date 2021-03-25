@@ -3,9 +3,7 @@ package com.home.fileManagement.module.res;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import java.util.Date;
 
 /**
@@ -31,11 +29,6 @@ public class UserRes {
     private Date createTime;
 
     private Date updateTime;
-
-    /**
-     * 是否删除 1：删除
-     */
-    private boolean isDelete;
 
     /**
      * 备注

@@ -10,14 +10,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author LX
@@ -37,11 +37,14 @@ public class UserServiceImpl implements UserServie {
         User user;
         Date now = new Date();
         //新增
-        if(StringUtils.hasText(req.getId())){
+        if(!StringUtils.hasText(req.getId())){
+            List<User> exists = userRepository.findAllByUserNameAndPassword(req.getUserName(), req.getPassword());
+//            if(!exists.isEmpty()){
+//                return null;
+//            }
             user = new User();
             BeanUtils.copyProperties(req, user);
             user.setId(UUID.randomUUID().toString())
-                    .setDelete(false)
                     .setCreateTime(now)
                     .setUpdateTime(now);
         }else {
@@ -58,9 +61,9 @@ public class UserServiceImpl implements UserServie {
     public boolean delete(String id) {
         try{
             User user = userRepository.findById(id).get();
-            user.setDelete(true)
-                    .setUpdateTime(new Date());
+            userRepository.delete(user);
         }catch (Exception e){
+            e.printStackTrace();
             return false;
         }
         return true;
@@ -76,22 +79,25 @@ public class UserServiceImpl implements UserServie {
 
     @Override
     public Page<UserRes> list(String userName, int page, int pageSize) {
-        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("createTime")));
+        Pageable pageable = PageRequest.of(page-1, pageSize, Sort.by(Sort.Order.desc("createTime")));
+        Page<User> userPage;
         List<UserRes> resList = new ArrayList<>();
         if(!StringUtils.hasText(userName)){
-            userRepository.findAll(pageable).stream().forEach(e->{
+            userPage = userRepository.findAll(pageable);
+            userPage.stream().forEach(e->{
                 UserRes res = new UserRes();
                 BeanUtils.copyProperties(e, res);
                 resList.add(res);
             });
         }else{
-            userRepository.findAllByUserNameLike("%"+userName+"%",pageable).stream().forEach(e->{
+            userPage = userRepository.findAllByUserNameLike("%" + userName + "%", pageable);
+            userPage.stream().forEach(e->{
                 UserRes res = new UserRes();
                 BeanUtils.copyProperties(e, res);
                 resList.add(res);
             });
         }
-        return new PageImpl<>(resList);
+        return null;
     }
 
 

@@ -33,11 +33,6 @@ public class User {
     private Date updateTime;
 
     /**
-     * 是否删除 1：删除
-     */
-    private boolean isDelete;
-
-    /**
      * 备注
      */
     private String remark;
