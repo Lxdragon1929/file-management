@@ -1,10 +1,11 @@
 package com.home.fileManagement.servie.impl;
 
 import com.home.fileManagement.dao.UserRepository;
+import com.home.fileManagement.module.common.Pagination;
 import com.home.fileManagement.module.db.User;
 import com.home.fileManagement.module.req.UserReq;
 import com.home.fileManagement.module.res.UserRes;
-import com.home.fileManagement.servie.UserServie;
+import com.home.fileManagement.servie.UserService;
 import com.home.fileManagement.util.LocalBeanUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -25,7 +26,7 @@ import java.util.UUID;
  */
 @Service
 @Slf4j
-public class UserServiceImpl implements UserServie {
+public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
@@ -78,7 +79,7 @@ public class UserServiceImpl implements UserServie {
     }
 
     @Override
-    public Page<UserRes> list(String userName, int page, int pageSize) {
+    public Pagination<UserRes> list(String userName, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page-1, pageSize, Sort.by(Sort.Order.desc("createTime")));
         Page<User> userPage;
         List<UserRes> resList = new ArrayList<>();
@@ -97,7 +98,7 @@ public class UserServiceImpl implements UserServie {
                 resList.add(res);
             });
         }
-        return null;
+        return new Pagination<>(page,pageSize,resList,userPage.getTotalElements(),userPage.getTotalPages());
     }
 
 

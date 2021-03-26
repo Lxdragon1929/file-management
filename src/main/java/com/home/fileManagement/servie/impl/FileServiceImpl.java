@@ -1,9 +1,106 @@
 package com.home.fileManagement.servie.impl;
 
+import com.home.fileManagement.dao.FileRepository;
+import com.home.fileManagement.module.common.Pagination;
+import com.home.fileManagement.module.db.FileResource;
+import com.home.fileManagement.module.req.FileResourceReq;
+import com.home.fileManagement.module.res.FileResourceRes;
+import com.home.fileManagement.servie.FileService;
+import com.home.fileManagement.util.LocalBeanUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
 /**
  * @author LX
  * @since 2021/3/24 11:23
  */
+@Service
+@Slf4j
+public class FileServiceImpl implements FileService {
 
-public class FileServiceImpl {
+    @Autowired
+    private FileRepository fileRepository;
+
+    @Override
+    public FileResourceRes addOrUpdate(FileResourceReq req) {
+        FileResourceRes res = new FileResourceRes();
+        FileResource fileResource;
+        Date now = new Date();
+        if(req.getId()==null){
+            //添加
+            fileResource = new FileResource();
+            BeanUtils.copyProperties(req, fileResource);
+            fileResource.setId(UUID.randomUUID().toString())
+                    .setDelete(false)
+                    .setCreateTime(now)
+                    .setUpdateTime(now);
+        }else{
+            //修改
+            fileResource = fileRepository.findById(req.getId()).get();
+            BeanUtils.copyProperties(req, fileResource, LocalBeanUtil.getNullPropertyNames(req));
+        }
+        BeanUtils.copyProperties(fileRepository.save(fileResource), res);
+        return res;
+    }
+
+    @Override
+    public boolean delete(String id) {
+        try{
+            FileResource fileResource = fileRepository.findById(id).get();
+            fileResource.setDelete(true)
+                    .setUpdateTime(new Date());
+            fileRepository.save(fileResource);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public FileResourceRes detail(String id) {
+        FileResourceRes res = new FileResourceRes();
+        FileResource fileResource = fileRepository.findById(id).get();
+        BeanUtils.copyProperties(fileResource, res);
+        return res;
+    }
+
+    @Override
+    public Pagination<FileResourceRes> list(String type, String fileName, int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("createTime")));
+
+        Page<FileResource> fileResourcePage = fileRepository.findAll(new Specification<FileResource>() {
+            @Override
+            public Predicate toPredicate(Root<FileResource> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicates = new ArrayList<>();
+                predicates.add(criteriaBuilder.and(criteriaBuilder.equal(root.get("isDelete"), false)));
+                if (StringUtils.hasText(type)) {
+                    predicates.add(criteriaBuilder.and(criteriaBuilder.equal(root.get("type"), type)));
+                }
+                if (StringUtils.hasText(fileName)) {
+                    predicates.add(criteriaBuilder.and(criteriaBuilder.like(root.get("fileName"), "%" + fileName + "%")));
+                }
+                return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+            }
+        }, pageable);
+        log.debug("fileResourcePage:{}", fileResourcePage);
+        return null;
+    }
 }

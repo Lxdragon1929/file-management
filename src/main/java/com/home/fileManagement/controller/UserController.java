@@ -1,10 +1,10 @@
 package com.home.fileManagement.controller;
 
+import com.home.fileManagement.module.common.Pagination;
 import com.home.fileManagement.module.req.UserReq;
 import com.home.fileManagement.module.res.UserRes;
-import com.home.fileManagement.servie.UserServie;
+import com.home.fileManagement.servie.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     @Autowired
-    private UserServie userServie;
+    private UserService userService;
 
     /**
      * 添加或修改用户
@@ -25,7 +25,7 @@ public class UserController {
      */
     @PostMapping("/addOrUpdate")
     public UserRes addOrUpdate(@RequestBody UserReq req){
-        return userServie.addOrUpdate(req);
+        return userService.addOrUpdate(req);
     }
 
     /**
@@ -35,7 +35,7 @@ public class UserController {
      */
     @PostMapping("/delete")
     public boolean delete(String id) {
-        return userServie.delete(id);
+        return userService.delete(id);
     }
 
     /**
@@ -45,7 +45,7 @@ public class UserController {
      */
     @GetMapping("/detail")
     public UserRes detail(String id){
-        return userServie.detail(id);
+        return userService.detail(id);
     }
 
     /**
@@ -56,8 +56,8 @@ public class UserController {
      * @return
      */
     @GetMapping("/list")
-    public Page<UserRes> list(String userName, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10")int pageSize){
-        return userServie.list(userName, page, pageSize);
+    public Pagination<UserRes> list(String userName, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10")int pageSize){
+        return userService.list(userName, page, pageSize);
     }
 
 
