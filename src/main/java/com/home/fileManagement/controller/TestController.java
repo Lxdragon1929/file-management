@@ -18,7 +18,6 @@ public class TestController {
 
     @PostMapping("/test")
     public String uploadFiles(@RequestBody MultipartFile[] files) {
-
         try {
             // 创建文件在服务器端存放路径
             //      String dir = request.getServletContext().getRealPath("G:\\家用文件服务");
